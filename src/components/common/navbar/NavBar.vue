@@ -7,8 +7,8 @@
     </div>
 
     <!-- 中间插槽 -->
-    <div class="conter">
-      <slot name="conter"></slot>
+    <div class="center">
+      <slot name="center"></slot>
     </div>
 
     <!-- 右边插槽 -->
@@ -42,16 +42,16 @@ export default {
   line-height: 3.5rem;
   box-sizing: border-box;
   text-align: center;
-  box-shadow: rgba(120, 120, 120, 0.5) 0 1px 5px ;
+  /* box-shadow: rgba(120, 120, 120, 0.5) 0 1px 5px ; */
+ 
 }
 .left,.right{
   width: 10vw;
 }
-.conter{
+.center{
   flex: 1;
   width: 80vw;
-  
- 
+  height: 3.5rem;
 }
 
 </style>

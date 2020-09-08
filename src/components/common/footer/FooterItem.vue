@@ -50,9 +50,11 @@ export default {
   font-size: 1rem;
   text-align: center;
   flex: 1;
+  z-index: 999;
 }
 .footer-itme-a {
   padding-top: 10px;
+  padding-bottom: 5px;
 }
 .footer-item img {
   width: 1.5rem;

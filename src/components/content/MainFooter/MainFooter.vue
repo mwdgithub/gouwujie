@@ -15,7 +15,7 @@
         />
         <div slot="item-text">首页</div>
       </footer-item>
-      <footer-item path="/branchclass">
+      <footer-item path="/consulting">
         <img
           slot="item-icon"
           src="../../../assets/img/icon/category.svg"
@@ -28,7 +28,7 @@
         />
         <div slot="item-text">分类</div>
       </footer-item>
-      <footer-item path="/consulting">
+      <footer-item path="/shoppingcart">
         <img
           slot="item-icon"
           src="../../../assets/img/icon/cart.svg"
@@ -69,4 +69,4 @@ export default {
   }
 };
 </script>
-<style lang="" scoped></style>
+<style  scoped></style>

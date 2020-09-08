@@ -5,7 +5,8 @@ export function request(config) {
   // 1.创建实例
   const instance = axios.create({
     //baseURL: "http://localhost:3000",
-    baseURL: "http://123.207.32.32:8000", //手机检测时，换该地址
+    // baseURL: "http://123.207.32.32:8000", //手机检测时，换该地址
+    baseURL:"http://152.136.185.210:8000/api/z8",
     timeout: 5000
   });
   // 2.给post请求的data 用qs.stringify转换成URL格式
