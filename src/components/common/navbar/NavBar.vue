@@ -13,7 +13,7 @@
 
     <!-- 右边插槽 -->
     <div class="right">
-      <slot name="left"></slot>
+      <slot name="right"></slot>
     </div>
   </div>
 </template>
@@ -37,21 +37,24 @@ export default {
 <style scoped>
 .nav-bar {
   width: 100vw;
-  height: 3.5rem;
+  height: 58px;
   display: flex;
-  line-height: 3.5rem;
+  line-height: 58px;
   box-sizing: border-box;
+  -ms-flex-align: center;
   text-align: center;
   /* box-shadow: rgba(120, 120, 120, 0.5) 0 1px 5px ; */
  
 }
 .left,.right{
   width: 10vw;
+  height: 58px;
 }
 .center{
   flex: 1;
   width: 80vw;
-  height: 3.5rem;
+  height: 58px;
+
 }
 
 </style>

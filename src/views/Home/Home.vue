@@ -3,14 +3,32 @@
     <nav-bar class="navbar-color">
       <div slot="center">购物街</div>
     </nav-bar>
-    <scroll class="conter" ref="scroll" :porbe-type="3" @scroll="contentScroll" :pull-up-load="true" @pullingUp="loadMore">
-      <home-swiper :banners="banners" id="swiper"></home-swiper>
+    <tab-control
+      :title="['流行', '新款', '精选']"
+      @tabClick="tabClick"
+      ref="tabControl1"
+      class="tab-control"
+      v-show="isTackFixed"
+    ></tab-control>
+    <scroll
+      class="conter"
+      ref="scroll"
+      :porbe-type="3"
+      @scroll="contentScroll"
+      :pull-up-load="true"
+      @pullingUp="loadMore"
+    >
+      <home-swiper
+        :banners="banners"
+        id="swiper"
+        @swiperimageLoad="swiperimageLoad"
+      ></home-swiper>
       <Recommend :recommends="recommends"></Recommend>
       <home-feature-view></home-feature-view>
       <tab-control
         :title="['流行', '新款', '精选']"
-        class="tab-contorl"
         @tabClick="tabClick"
+        ref="tabControl2"
       ></tab-control>
       <goods-list :goods="goods[currentType].list"></goods-list>
     </scroll>
@@ -30,8 +48,9 @@ import Scroll from "../../components/common/scroll/Scroll";
 import BackTop from "../../components/content/backTop/BackTop";
 
 import { getHomeMulitidata, getHomeGoods } from "../../network/home.js";
+import { debounce } from "../../common/utils.js";
 // 没有 default 导出 必须加花括号  有的话可以不加
-
+import { letmListenerMixin } from "../../common/mixin.js";
 export default {
   name: "Home",
   components: {
@@ -55,7 +74,11 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
-      isShowBackTop:false
+      isShowBackTop: false,
+      tabOffsetTop: 0,
+      isTackFixed: false,
+      saveY: 0,
+      itemImgListener: null,
     };
   },
 
@@ -90,14 +113,17 @@ export default {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
         // console.log(res);
-        // this.$refs.scroll.finishPullUp()
-        
+        // 完成上拉加载更多
+        this.$refs.scroll.finishPullUp();
       });
     },
-    contentScroll(position){
+    contentScroll(position) {
       // console.log(position);
       // position.y<1000
-      this.isShowBackTop=(-position.y)>1000
+      // 1.判断BackTop是否显示
+      this.isShowBackTop = -position.y > 1000;
+      // 2.判断tabContorl是否吸顶(position:fixed)
+      this.isTackFixed = -position.y > this.tabOffsetTop;
     },
     /**
      * 事件监听相关的方法
@@ -115,21 +141,53 @@ export default {
           break;
       }
       // console.log(123);
+      this.$refs.tabControl1.currentIndex = index;
+      this.$refs.tabControl2.currentIndex = index;
     },
     backClick() {
       // console.log("1");
-      this.$refs.scroll.scrollTo(0,0,500)
-
+      this.$refs.scroll.scrollTo(0, 0, 500);
     },
-    loadMore(){
+    loadMore() {
       // console.log('上拉加载更多');
-      this.getHomeGoods(this.currentType)//刷新到一定量加载更多
+      this.getHomeGoods(this.currentType); //刷新到一定量加载更多
       // this.$refs.scroll.scroll.refresh()
-    }
+    },
+    swiperimageLoad() {
+      // console.log(this.$refs.tabControl.$el.offsetTop);
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
+    },
   },
 
   //DOM挂载完毕
-  mounted() {},
+  mounted() {
+    // 图片加载完成的事件监听
+    const refresh = debounce(this.$refs.scroll.refresh, 20);
+    this.itemImgListener = () => {
+      refresh(20, 30, "abc");
+    };
+    // 3. 监听item中图片加载完成
+    this.$bus.$on("itemImageload", () => {
+      // console.log('--------');
+      refresh();
+    });
+    //获取tabControl的offsetTop
+    //所有的组件都有一个属性$el,用于获取组件中的元素
+  },
+  destroyed() {
+    console.log("冻结");
+  },
+  activated() {
+    //固定首页滑动后切换回来的位子
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    this.$refs.scroll.refresh();
+  },
+  deactivated() {
+    // 1 保存Y值
+    this.saveY = this.$refs.scroll.getScrollY();
+
+    this.$bus.$off("itemImageload", this.itemImgListener);
+  },
 };
 </script>
 <style scoped>
@@ -137,25 +195,28 @@ export default {
   height: 100vh;
 }
 #swiper {
-  padding-top: 3.6rem;
+  /* padding-top: 3.6rem; */
 }
 .navbar-color {
   background: #ff8e97;
   color: white;
   font-size: 1.3rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9;
-  height: 3.6rem;
+  height: 56px;
 }
 .tab-control {
-  /* position: sticky; */
-  top: 53px;
+  position: relative;
+  z-index: 9;
 }
-.conter {
+/* .conter {
   height: calc(100% - 60px);
   overflow: hidden;
+} */
+.conter {
+  overflow: hidden;
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  bottom: 60px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="goods-item">
-    <img :src="goodsItem.show.img" alt="" />
+  <div class="goods-item" @click="itemClick">
+    <img v-lazy="goodsItem.show.img" alt="" @load="imageLoad" />
     <div class="goodsItem-l clearfix">
       <p>{{ goodsItem.title }}</p>
       <span class="price">{{ goodsItem.price }}</span>
@@ -24,11 +24,32 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      
+    };
   },
-  methods: {},
+  methods: {
+    imageLoad() {
+      //imageLoad 加载图片的次数
+      this.$bus.$emit("itemImageload");
+      // if (this.$route.path.indexOf('/home')) {
+      //   this.$bus.$emit("itemImageload");
+      // }if (this.$route.path.indexOf('/detal')) {
+      //   this.$bus.$emit("detalitemImageload");
+      // }
+      
+      // console.log('imageLoad');
+    },
+    itemClick() {
+      // console.log('跳转详情页');
+      // this.$router.push('/detal')
+      this.$router.push("/detal/" + this.goodsItem.iid);
+    },
+  },
   //生命周期 - 创建完成
-  created() {},
+  created() {
+   
+  },
 
   //DOM挂载完毕
   mounted() {},
